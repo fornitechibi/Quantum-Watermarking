@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quantum Watermarking</title>
+    <script>
+        function updateShareInputs() {
+            const thresholdInput = document.getElementById('thresholdExtract');
+            const numShares = parseInt(thresholdInput.value) || 2;
+            const container = document.getElementById('shareInputsContainer');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= numShares; i++) {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label>x${i}:</label>
+                    <input type="number" name="x${i}" required />
+                    <label>y${i}:</label>
+                    <input type="number" name="y${i}" required /><br/><br/>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        window.onload = function() {
+            updateShareInputs();
+            document.getElementById('thresholdExtract').addEventListener('change', updateShareInputs);
+        }
+    </script>
+</head>
+<body>
+    <h2>Quantum-Inspired Watermark Embedding with Secret Sharing</h2>
+
+    <h3>Embed Watermark (Integer only)</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="embed"/>
+        <label>Upload Image (grayscale recommended):</label><br/>
+        <input type="file" name="image" required /><br/><br/>
+
+        <label>Secret Integer Watermark:</label><br/>
+        <input type="text" name="watermark" pattern="\d+" title="Integer only" required /><br/><br/>
+
+        <label>Threshold (min shares to recover):</label><br/>
+        <input type="number" name="threshold" value="2" min="2" max="10" /><br/><br/>
+
+        <label>Total Number of Shares:</label><br/>
+        <input type="number" name="num_shares" value="3" min="2" max="10" /><br/><br/>
+
+        <input type="submit" value="Embed & Generate Shares" />
+    </form>
+
+    {% if message %}
+    <p style="color:green;">{{ message }}</p>
+    {% endif %}
+
+    {% if watermarked_image %}
+    <h3>Watermarked Image Preview:</h3>
+    <img src="data:image/png;base64,{{ watermarked_image }}" alt="Watermarked Image" width="300"/><br/><br/>
+    {% if watermarked_image_id %}
+    <a href="{{ url_for('download_image', image_id=watermarked_image_id) }}" download>Download Watermarked Image</a>
+    {% endif %}
+    {% endif %}
+
+    {% if qr_files %}
+    <h3>Generated QR Code Shares:</h3>
+    {% for qr in qr_files %}
+    <img src="{{ qr }}" width="150" style="margin:10px;" />
+    {% endfor %}
+    {% endif %}
+
+    <hr/>
+    <h3>Extract Watermark</h3>
+    <label>Threshold (number of shares to input):</label>
+    <input type="number" id="thresholdExtract" name="thresholdExtract" value="2" min="2" max="10" /><br/><br/>
+
+    <form method="POST" enctype="multipart/form-data" id="extractForm">
+        <input type="hidden" name="action" value="extract" />
+
+        <div id="shareInputsContainer"></div>
+
+        <label>Watermark Bit Length:</label>
+        <input type="number" name="bit_len" required value="{{ watermark_bit_length or '0' }}" /><br/><br/>
+
+        <label>Upload Watermarked Image:</label><br/>
+        <input type="file" name="watermarked_image" required /><br/><br/>
+
+        <input type="submit" value="Extract Watermark" />
+    </form>
+
+    {% if extracted_watermark %}
+    <h4>Extracted Watermark Integer:</h4>
+    <p style="font-weight:bold;">{{ extracted_watermark }}</p>
+    {% endif %}
+</body>
+</html>
