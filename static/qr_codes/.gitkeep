@@ -1,0 +1,2 @@
+# This file ensures the qr_codes directory is tracked in git
+# while keeping the directory contents ignored

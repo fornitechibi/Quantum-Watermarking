@@ -1,1 +1,6 @@
 myenv/
+downloads/*
+!downloads/.gitkeep
+static/raw_img/
+static/qr_codes/*
+!static/qr_codes/.gitkeep
