@@ -1,26 +1,43 @@
-# Quantum Watermarking Images using Qubit Shares
+# 🔬 Quantum Watermarking Images using Qiskit
 
 [AI enabled Documentation](https://deepwiki.com/fornitechibi/Quantum-Watermarking)
 
-A sophisticated digital watermarking system that combines LSB (Least Significant Bit) steganography with Shamir's Secret Sharing scheme to create a secure and distributed watermark protection mechanism. This project provides both embedding and extraction capabilities through a user-friendly web interface.
+A cutting-edge digital watermarking system that leverages **IBM Qiskit quantum computing** to enhance security in image watermarking. This project combines LSB (Least Significant Bit) steganography with quantum-enhanced Shamir's Secret Sharing scheme, utilizing real quantum circuits for cryptographic operations and random number generation.
 
-## 🌟 Features
+## 🌟 Revolutionary Features
+
+### Quantum Computing Integration
+
+- **Qiskit Quantum Circuits**: Uses IBM's Qiskit framework for quantum computations
+- **Quantum Random Number Generation**: True randomness from quantum superposition states
+- **Quantum-Enhanced Secret Sharing**: Leverages quantum circuits for coefficient generation
+- **Quantum Entangled Shares**: Creates quantum entangled states for additional security layers
+- **Quantum Key Generation**: Generates cryptographically secure keys using quantum mechanics
+
+### Advanced Watermarking Capabilities
 
 - **LSB Watermarking**: Embeds integer watermarks into image pixels using least significant bit manipulation
-- **Secret Sharing**: Implements Shamir's Secret Sharing to distribute watermark data across multiple QR codes
-- **Threshold Security**: Configurable threshold scheme (k-of-n) where only k shares are needed to reconstruct the secret
-- **QR Code Generation**: Automatically generates QR codes for each secret share for easy distribution
-- **Web Interface**: Flask-based web application for easy watermark embedding and extraction
+- **Quantum-Enhanced Embedding**: Uses quantum bit encoding for enhanced security
+- **Threshold Security**: Configurable quantum-enhanced threshold scheme (k-of-n)
+- **Quantum Signature Verification**: Cryptographic signatures using quantum-generated salts
+- **QR Code Generation**: Automatically generates QR codes for each secret share
+
+### User Experience
+
+- **Modern Web Interface**: Beautiful, responsive Flask-based web application
+- **Real-time Quantum Operations**: Live quantum key generation via API
+- **Metadata Management**: Download quantum metadata for enhanced verification
 - **Image Processing**: Support for various image formats with automatic grayscale conversion
-- **Download Management**: Secure file download system for watermarked images
+- **Secure Downloads**: Encrypted file download system for watermarked images
 
-## 🔧 Technology Stack
+## 🔧 Quantum Technology Stack
 
+- **Quantum Computing**: IBM Qiskit 1.2.4, Qiskit Aer 0.15.1, Qiskit Algorithms 0.3.1
 - **Backend**: Python 3.13, Flask
 - **Image Processing**: PIL (Pillow), OpenCV, NumPy
-- **Cryptography**: Shamir's Secret Sharing implementation using SymPy
+- **Cryptography**: Quantum-enhanced Shamir's Secret Sharing using SymPy
 - **QR Codes**: qrcode library for share distribution
-- **Frontend**: HTML5, JavaScript, CSS
+- **Frontend**: Modern HTML5, JavaScript, CSS with quantum-themed UI
 
 ## 📋 Prerequisites
 
@@ -64,22 +81,35 @@ A sophisticated digital watermarking system that combines LSB (Least Significant
 5. **Access the web interface**:
    Open your browser and navigate to `http://127.0.0.1:5000`
 
-## 💡 How It Works
+## � How Quantum Computing Enhances Security
 
-### Watermark Embedding Process
+### Quantum Watermark Embedding Process
 
-1. **Input Processing**: Upload an image and specify an integer watermark
-2. **Secret Sharing**: The watermark is split into multiple shares using Shamir's Secret Sharing
-3. **LSB Embedding**: The original watermark is embedded into the image using LSB steganography
-4. **QR Generation**: Each share is encoded into a QR code for secure distribution
-5. **Output**: Watermarked image and QR codes containing the shares
+1. **Quantum Key Generation**: Uses quantum superposition to generate truly random cryptographic keys
+2. **Quantum-Enhanced Secret Sharing**:
+   - Generates polynomial coefficients using quantum random number generation
+   - Creates quantum entangled shares for additional security layers
+   - Applies quantum polynomial evaluation with enhanced randomness
+3. **Quantum Bit Encoding**: Encodes watermark bits using quantum superposition states
+4. **LSB Embedding**: Embeds quantum-encoded watermark into image pixels
+5. **Quantum Signature**: Creates cryptographic signatures using quantum-generated salts
+6. **QR Generation**: Each share is encoded into QR codes with quantum metadata
 
-### Watermark Extraction Process
+### Quantum Watermark Extraction Process
 
-1. **Share Collection**: Scan QR codes or manually input share values
-2. **Secret Reconstruction**: Combine threshold number of shares to reconstruct the original watermark
-3. **LSB Extraction**: Extract the watermark from the LSB of image pixels
-4. **Verification**: Compare reconstructed and extracted values for integrity verification
+1. **Share Collection**: Scan QR codes or input share values manually
+2. **Quantum-Enhanced Reconstruction**: Uses quantum Lagrange interpolation
+3. **LSB Extraction**: Extracts quantum-encoded watermark from image pixels
+4. **Quantum Verification**: Verifies integrity using quantum signatures
+5. **Key Recovery**: Applies quantum key operations to recover original watermark
+
+### Quantum Security Advantages
+
+- **True Randomness**: Quantum mechanics provides genuinely random numbers, not pseudo-random
+- **Quantum Entanglement**: Creates unbreakable correlations between shares
+- **Enhanced Cryptography**: Quantum-generated keys offer superior security
+- **Tamper Detection**: Quantum signatures detect any unauthorized modifications
+- **Future-Proof**: Resistant to classical and quantum computing attacks
 
 ## 🎯 Usage
 
@@ -150,3 +180,69 @@ Watermarking-Quantum/
 - Encodes share coordinates as "x{i}={x_val},y{i}={y_val}"
 - Generates high-contrast QR codes for reliable scanning
 - Supports both manual entry and QR scanning workflows
+
+## 🔬 Quantum API Endpoints
+
+The application provides several quantum computing APIs for advanced users:
+
+### Generate Quantum Key
+
+```bash
+GET /api/generate_quantum_key?bits=32
+```
+
+Returns a quantum-generated random key using Qiskit quantum circuits.
+
+**Response:**
+
+```json
+{
+  "quantum_key": 1234567890,
+  "bit_length": 32,
+  "hex_representation": "0x499602d2"
+}
+```
+
+### Generate Quantum Entangled Shares
+
+```bash
+GET /api/quantum_shares/12345
+```
+
+Creates quantum entangled shares for a given secret using quantum circuits.
+
+**Response:**
+
+```json
+{
+  "secret": 12345,
+  "quantum_shares": ["10110010", "01001101", "11010110"],
+  "num_qubits": 8
+}
+```
+
+## ⚛️ Quantum Computing Components
+
+### QuantumKeyGenerator
+
+- Generates truly random bits using quantum superposition
+- Creates cryptographically secure keys for watermarking
+- Uses Hadamard gates to put qubits in superposition states
+
+### QuantumSecretSharing
+
+- Enhances Shamir's Secret Sharing with quantum randomness
+- Uses quantum circuits for polynomial coefficient generation
+- Implements quantum-enhanced Lagrange interpolation
+
+### QuantumWatermarkEncoder
+
+- Creates quantum signatures for watermark integrity
+- Encodes watermark bits using quantum superposition
+- Provides tamper-evident quantum verification
+
+### Quantum Entangled Shares
+
+- Creates quantum entangled states between shares
+- Uses quantum rotation gates for share differentiation
+- Provides quantum correlation for enhanced security

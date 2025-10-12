@@ -1,7 +1,113 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Quantum Watermarking</title>
+    <title>Quantum Watermarking with Qiskit</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+        
+        h1, h2, h3 { color: #2c3e50; }
+        h1 { text-align: center; margin-bottom: 30px; }
+        
+        .quantum-badge {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .quantum-controls {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #3498db;
+        }
+        
+        input[type="file"], input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        input[type="submit"], button {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        input[type="submit"]:hover, button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .quantum-key-gen {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .verification-status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .verified { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .not-verified { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        .qr-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .qr-item {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
     <script>
         function updateShareInputs() {
             const thresholdInput = document.getElementById('thresholdExtract');
@@ -21,6 +127,18 @@
             }
         }
 
+        async function generateQuantumKey() {
+            try {
+                const response = await fetch('/api/generate_quantum_key?bits=32');
+                const data = await response.json();
+                document.getElementById('quantumKeyDisplay').innerHTML = 
+                    `<strong>Quantum Key:</strong> ${data.quantum_key}<br/>
+                     <strong>Hex:</strong> ${data.hex_representation}`;
+            } catch (error) {
+                console.error('Error generating quantum key:', error);
+            }
+        }
+
         window.onload = function() {
             updateShareInputs();
             document.getElementById('thresholdExtract').addEventListener('change', updateShareInputs);
@@ -28,67 +146,197 @@
     </script>
 </head>
 <body>
-    <h2>Quantum-Inspired Watermark Embedding with Secret Sharing</h2>
+    <div class="container">
+        <h1>🔬 Quantum Watermarking with Qiskit <span class="quantum-badge">QUANTUM-ENHANCED</span></h1>
+        
+        <div class="form-section">
+            <h3>🖼️ Embed Watermark</h3>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="action" value="embed"/>
+                
+                <label><strong>Upload Image:</strong></label>
+                <input type="file" name="image" required accept="image/*"/>
 
-    <h3>Embed Watermark (Integer only)</h3>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="action" value="embed"/>
-        <label>Upload Image (grayscale recommended):</label><br/>
-        <input type="file" name="image" required /><br/><br/>
+                <label><strong>Secret Integer Watermark:</strong></label>
+                <input type="text" name="watermark" pattern="\d+" title="Integer only" required />
 
-        <label>Secret Integer Watermark:</label><br/>
-        <input type="text" name="watermark" pattern="\d+" title="Integer only" required /><br/><br/>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label><strong>Threshold (min shares):</strong></label>
+                        <input type="number" name="threshold" value="2" min="2" max="10" />
+                    </div>
+                    <div style="flex: 1;">
+                        <label><strong>Total Shares:</strong></label>
+                        <input type="number" name="num_shares" value="3" min="2" max="10" />
+                    </div>
+                </div>
 
-        <label>Threshold (min shares to recover):</label><br/>
-        <input type="number" name="threshold" value="2" min="2" max="10" /><br/><br/>
+                <div class="quantum-controls">
+                    <label>
+                        <input type="checkbox" name="use_quantum" checked style="width: auto; margin-right: 10px;">
+                        <strong>🚀 Enable Quantum Enhancement</strong>
+                        <small style="display: block; color: #666; margin-top: 5px;">
+                            Uses Qiskit quantum circuits for enhanced security and randomness
+                        </small>
+                    </label>
+                </div>
 
-        <label>Total Number of Shares:</label><br/>
-        <input type="number" name="num_shares" value="3" min="2" max="10" /><br/><br/>
+                <div class="quantum-key-gen">
+                    <h4>🔑 Quantum Key Generator</h4>
+                    <button type="button" onclick="generateQuantumKey()">Generate Quantum Random Key</button>
+                    <div id="quantumKeyDisplay" style="margin-top: 10px; font-family: monospace;"></div>
+                </div>
 
-        <input type="submit" value="Embed & Generate Shares" />
-    </form>
+                <input type="submit" value="🎯 Embed Watermark & Generate Shares" />
+            </form>
+        </div>
 
-    {% if message %}
-    <p style="color:green;">{{ message }}</p>
-    {% endif %}
+        {% if message %}
+        <div class="verification-status {% if 'Warning' in message %}not-verified{% else %}verified{% endif %}" id="message-section">
+            {{ message }}
+        </div>
+        {% endif %}
 
-    {% if watermarked_image %}
-    <h3>Watermarked Image Preview:</h3>
-    <img src="data:image/png;base64,{{ watermarked_image }}" alt="Watermarked Image" width="300"/><br/><br/>
-    {% if watermarked_image_id %}
-    <a href="{{ url_for('download_image', image_id=watermarked_image_id) }}" download>Download Watermarked Image</a>
-    {% endif %}
-    {% endif %}
+        {% if watermarked_image %}
+        <div class="form-section">
+            <h3>🖼️ Watermarked Image Preview</h3>
+            <div style="text-align: center;">
+                <img src="data:image/png;base64,{{ watermarked_image }}" alt="Watermarked Image" 
+                     style="max-width: 100%; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);"/>
+            </div>
+            {% if watermarked_image_id %}
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="{{ url_for('download_image', image_id=watermarked_image_id) }}" 
+                   style="background: #27ae60; color: white; padding: 10px 20px; text-decoration: none; 
+                          border-radius: 25px; display: inline-block; margin: 5px;">
+                    📥 Download Watermarked Image
+                </a>                    <a href="{{ url_for('download_metadata', image_id=watermarked_image_id) }}" 
+                       style="background: #8e44ad; color: white; padding: 10px 20px; text-decoration: none; 
+                              border-radius: 25px; display: inline-block; margin: 5px;">
+                        🔐 Download Quantum Metadata
+                    </a>
+                    <p style="font-size: 12px; color: #666; text-align: center; margin-top: 10px;">
+                        ⚠️ <strong>Important:</strong> Download BOTH files! The metadata contains quantum keys and signatures needed for secure extraction.
+                    </p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
 
-    {% if qr_files %}
-    <h3>Generated QR Code Shares:</h3>
-    {% for qr in qr_files %}
-    <img src="{{ qr }}" width="150" style="margin:10px;" />
-    {% endfor %}
-    {% endif %}
+        {% if qr_files %}
+        <div class="form-section">
+            <h3>📱 Secret Share QR Codes</h3>
+            <div class="qr-container">
+                {% for qr in qr_files %}
+                <div class="qr-item">
+                    <img src="{{ qr }}" width="150" />
+                    <p style="text-align: center; margin: 5px 0; font-weight: bold;">
+                        Share {{ loop.index }}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
-    <hr/>
-    <h3>Extract Watermark</h3>
-    <label>Threshold (number of shares to input):</label>
-    <input type="number" id="thresholdExtract" name="thresholdExtract" value="2" min="2" max="10" /><br/><br/>
+        <div class="form-section">
+            <h3>🔍 Extract Watermark</h3>
+            
+            <label><strong>Number of shares to input:</strong></label>
+            <input type="number" id="thresholdExtract" name="thresholdExtract" value="2" min="2" max="10" />
 
-    <form method="POST" enctype="multipart/form-data" id="extractForm">
-        <input type="hidden" name="action" value="extract" />
+            <form method="POST" enctype="multipart/form-data" id="extractForm">
+                <input type="hidden" name="action" value="extract" />
 
-        <div id="shareInputsContainer"></div>
+                <div id="shareInputsContainer" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;"></div>
 
-        <label>Watermark Bit Length:</label>
-        <input type="number" name="bit_len" required value="{{ watermark_bit_length or '0' }}" /><br/><br/>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label><strong>Watermark Bit Length:</strong></label>
+                        <input type="number" name="bit_len" required value="{{ watermark_bit_length or '0' }}" />
+                    </div>
+                </div>
 
-        <label>Upload Watermarked Image:</label><br/>
-        <input type="file" name="watermarked_image" required /><br/><br/>
+                <label><strong>Upload Watermarked Image:</strong></label>
+                <input type="file" name="watermarked_image" required accept="image/*"/>
 
-        <input type="submit" value="Extract Watermark" />
-    </form>
+                <div class="quantum-controls">
+                    <label>
+                        <input type="checkbox" name="use_quantum_extract" checked style="width: auto; margin-right: 10px;">
+                        <strong>🔬 Use Quantum-Enhanced Extraction</strong>
+                    </label>
+                    
+                    <div style="margin-top: 10px;">
+                        <label><strong>Upload Quantum Metadata (for full security):</strong></label>
+                        <input type="file" name="metadata_file" accept=".json"/>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            📁 Upload the quantum metadata JSON file downloaded during embedding<br/>
+                            🔐 Required for quantum signature verification and enhanced security<br/>
+                            ⚠️ Without metadata: Falls back to basic reconstruction (less secure)
+                        </small>
+                    </div>
+                </div>
 
-    {% if extracted_watermark %}
-    <h4>Extracted Watermark Integer:</h4>
-    <p style="font-weight:bold;">{{ extracted_watermark }}</p>
-    {% endif %}
+                <input type="submit" value="🔬 Extract & Verify Watermark" />
+            </form>
+        </div>
+
+        {% if extracted_watermark %}
+        <div class="form-section" id="extraction-results">
+            <h3>✅ Extraction Results</h3>
+            <div style="background: #e8f5e8; padding: 20px; border-radius: 10px; border-left: 4px solid #4caf50;">
+                <h4>Extracted Watermark Integer:</h4>
+                <p style="font-weight: bold; font-size: 18px; color: #2e7d32;">{{ extracted_watermark }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Auto-scroll to extraction results after page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we have extraction results and scroll to them
+            const extractionResults = document.getElementById('extraction-results');
+            const messageSection = document.getElementById('message-section');
+            
+            if (extractionResults) {
+                // Scroll to extraction results if they exist
+                extractionResults.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            } else if (messageSection && messageSection.textContent.includes('extracted')) {
+                // Scroll to message section if it contains extraction info
+                messageSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }
+        });
+        
+        // Handle extraction form submission to ensure we scroll to results
+        const extractForm = document.querySelector('form[action="/extract"]');
+        if (extractForm) {
+            extractForm.addEventListener('submit', function() {
+                setTimeout(function() {
+                    // After form submission, scroll to results (with delay for page reload)
+                    const extractionResults = document.getElementById('extraction-results');
+                    const messageSection = document.getElementById('message-section');
+                    
+                    if (extractionResults) {
+                        extractionResults.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    } else if (messageSection) {
+                        messageSection.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    }
+                }, 100);
+            });
+        }
+    </script>
 </body>
 </html>
