@@ -1,0 +1,19 @@
+flowchart TB
+  subgraph Classical Side
+    A[Preprocess watermark metadata] --> B[SSS Split (k,n)]
+    B --> C[Embed lightweight tag in media]
+  end
+  subgraph Quantum Side
+    D[Encode verification token as qubits]
+    D --> E[Entangle & Sign]
+    E --> F[Store/Distribute token refs]
+  end
+  C --> G[Release asset]
+  G --> H[Verification Request]
+  H --> I{Verifier}
+  I --> J[Classical check (reconstruct tag)]
+  I --> K[Quantum check (measure token)]
+  J --> L{Decision}
+  K --> L
+  L -->|Pass| M[Provenance OK]
+  L -->|Fail| N[Tamper/Invalid]

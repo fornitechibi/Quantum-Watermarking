@@ -1,0 +1,9 @@
+flowchart LR
+  A["Host Data / Media"] --> B["Watermark Payload"]
+  B --> C["Polynomial f(x) of degree k-1"]
+  C --> D["Share Generation (n shares)"]
+  D --> E{"Distribution / Storage"}
+  E -- ">=k shares" --> F["Reconstruction via Lagrange Interpolation"]
+  F --> G["Watermark Verification (match?)"]
+  E -- "<k shares" --> H["Information-Theoretic Hiding"]
+  style H fill:#eef,stroke:#88a

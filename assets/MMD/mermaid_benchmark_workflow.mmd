@@ -1,0 +1,13 @@
+flowchart LR
+  A[Benchmark Harness] --> B[SSS Module]
+  A --> C[Quantum Encoder (Qiskit)]
+  B --> D[Timing: embed/retrieve]
+  C --> D
+  A --> E[Scalability Loop (sizes)]
+  A --> F[Security Tests (brute-force, tamper)]
+  A --> G[Entropy + Noise/Decoherence]
+  D --> H[CSV/Logs]
+  E --> H
+  F --> H
+  G --> H
+  H --> I[Matplotlib Plots]

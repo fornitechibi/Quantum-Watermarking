@@ -1,0 +1,10 @@
+flowchart LR
+  A[Host Data / Media] --> B[Watermark Payload (bits)]
+  B --> C[Quantum State Encoding (H, RZ, RX)]
+  C --> D[Entanglement (CX/Bell/GHZ)]
+  D --> E[Token Distribution (channels)]
+  E --> F[Measurement in Chosen Basis]
+  F --> G{Verifier Checks Correlations}
+  G -->|Valid stats| H[Accept Watermark]
+  G -->|Disturbance| I[Tamper Evident]
+  style I fill:#fee,stroke:#c66

@@ -4,3 +4,6 @@ downloads/*
 static/raw_img/
 static/qr_codes/*
 !static/qr_codes/.gitkeep
+conference_paper_draft.md
+conference_paper_main.md
+Results.md
